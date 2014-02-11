@@ -24,6 +24,11 @@ type counter struct {
 	item       string
 }
 
+type Counted interface {
+	Count() int
+	Value() string
+}
+
 func newCounter(bucketNode *list.Element, item string) *counter {
 	return &counter{
 		bucketNode: bucketNode,
@@ -31,6 +36,14 @@ func newCounter(bucketNode *list.Element, item string) *counter {
 		count:      0,
 		error:      0,
 	}
+}
+
+func (c *counter) Count() int {
+	return int(c.Count())
+}
+
+func (c *counter) Value() string {
+	return c.item
 }
 
 func newBucket(count int64) *bucket {
@@ -139,15 +152,15 @@ func (c *TopKCounter) Peek(k int) []string {
 	return topK
 }
 
-func (c *TopKCounter) TopK(k int) []*counter {
-	topK := make([]*counter, 0, k)
+func (c *TopKCounter) TopK(k int) []Counted {
+	topK := make([]Counted, 0, k)
 	for bNode := c.bucketList.Back(); bNode != nil; bNode = bNode.Prev() {
 		b := bNode.Value.(*bucket)
 		for a := b.counterList.Back(); a != nil; a = a.Prev() {
 			if len(topK) == k {
 				return topK
 			}
-			topK = append(topK, a.Value.(*counter))
+			topK = append(topK, Counted(a.Value.(*counter)))
 		}
 	}
 	return topK
