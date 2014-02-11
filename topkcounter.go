@@ -39,7 +39,7 @@ func newCounter(bucketNode *list.Element, item string) *counter {
 }
 
 func (c *counter) Count() int {
-	return int(c.Count())
+	return int(c.count)
 }
 
 func (c *counter) Value() string {
